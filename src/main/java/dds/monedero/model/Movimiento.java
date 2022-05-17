@@ -2,8 +2,6 @@ package dds.monedero.model;
 
 import java.time.LocalDate;
 
-// Si hacía una clase abstracta Movimiento, iba a tener una lista para depositos y otra para
-// extracciones.
 public class Movimiento {
   private final LocalDate fecha;
   // Nota: En ningún lenguaje de programación usen jamás doubles
@@ -32,13 +30,17 @@ public class Movimiento {
     return this.fecha.equals(fecha);
   }
 
+  public Tipo getTipo() {
+    return tipo;
+  }
+
   double calcularValor(Cuenta cuenta, Tipo tipo) {
     return cuenta.getSaldo() + tipo.calcularValor(this);
   }
 
   void agregateA(Cuenta cuenta) {
     cuenta.setSaldo(calcularValor(cuenta, tipo));
-    cuenta.agregarMovimiento(fecha, monto);
+    tipo.agregarMovimiento(fecha, this, cuenta);
   }
 
 }

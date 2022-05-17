@@ -47,10 +47,9 @@ public class MonederoTest {
   }
 
   @Test
-  void DepositoSeAgregaAMovimientos() {
+  void DepositoSeAgregaADeposito() {
     cuenta.poner(1500);
-    Assertions.assertEquals(cuenta.getMovimientos().get(0).getMonto(), 1500);
-    Assertions.assertTrue(cuenta.getMovimientos().get(0).isDeposito());
+    Assertions.assertEquals(cuenta.depositos.get(0).getMonto(), 1500);
   }
 
   @Test
