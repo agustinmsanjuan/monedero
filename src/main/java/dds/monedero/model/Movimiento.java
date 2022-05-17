@@ -2,6 +2,10 @@ package dds.monedero.model;
 
 import java.time.LocalDate;
 
+
+// CODE SMELL: Large Class / God Class
+// La clase Movimiento es demasiado general, debería estar dividida en depósito y extracción.
+// Quizas movimiento podría ser una clase abstracta, y depósito y extracción las clases que hereden de esta.
 public class Movimiento {
   private LocalDate fecha;
   // Nota: En ningún lenguaje de programación usen jamás doubles (es decir, números con punto flotante) para modelar dinero en el mundo real.
@@ -49,7 +53,7 @@ public class Movimiento {
     cuenta.agregarMovimiento(fecha, monto, esDeposito);
   }
 
-  public double calcularValor(Cuenta cuenta) {
+  public double calcularValor(Cuenta cuenta) { // Esto está horrible falta polimorfismo, mejor usar herencia/composición y volar los if.
     if (esDeposito) {
       return cuenta.getSaldo() + getMonto();
     } else {

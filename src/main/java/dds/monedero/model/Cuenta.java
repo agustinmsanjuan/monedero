@@ -26,8 +26,9 @@ public class Cuenta {
     this.movimientos = movimientos;
   }
 
+  // Acá yo utilizaría otro nombre de parámetro, como monto, en lugar de cuanto.
   public void poner(double cuanto) {
-    if (cuanto <= 0) {
+    if (cuanto <= 0) { // cuanto <= 0 quedaría mejor abstraido como this.esNegativo(monto)
       throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
     }
 
@@ -38,8 +39,12 @@ public class Cuenta {
     new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
   }
 
+  // CODE SMELLS:  Duplicated Code - Long Method
+  // Me parece muy largo y con demasiadas validaciones que pueden abstraerse en otro lado quizás.
+  // De igual forma, cuando busque una solución en el próximo commit, lo evaluaré.
+  // Lo solucionaría con composición.
   public void sacar(double cuanto) {
-    if (cuanto <= 0) {
+    if (cuanto <= 0) { // se vuelve a repetir lógica
       throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
     }
     if (getSaldo() - cuanto < 0) {
@@ -51,7 +56,7 @@ public class Cuenta {
       throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
           + " diarios, límite: " + limite);
     }
-    new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
+    new Movimiento(LocalDate.now(), cuanto, false).agregateA(this); // aca también repite
   }
 
   public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
