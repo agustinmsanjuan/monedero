@@ -2,22 +2,22 @@ package dds.monedero.model;
 
 import java.time.LocalDate;
 
-
-// CODE SMELL: Large Class / God Class
-// La clase Movimiento es demasiado general, debería estar dividida en depósito y extracción.
-// Quizas movimiento podría ser una clase abstracta, y depósito y extracción las clases que hereden de esta.
+// Si hacía una clase abstracta Movimiento, iba a tener una lista para depositos y otra para
+// extracciones.
 public class Movimiento {
-  private LocalDate fecha;
-  // Nota: En ningún lenguaje de programación usen jamás doubles (es decir, números con punto flotante) para modelar dinero en el mundo real.
-  // En su lugar siempre usen numeros de precision arbitraria o punto fijo, como BigDecimal en Java y similares
+  private final LocalDate fecha;
+  // Nota: En ningún lenguaje de programación usen jamás doubles
+  // (es decir, números con punto flotante) para modelar dinero en el mundo real.
+  // En su lugar siempre usen numeros de precision arbitraria o punto fijo,
+  // como BigDecimal en Java y similares.
   // De todas formas, NO es necesario modificar ésto como parte de este ejercicio. 
-  private double monto;
-  private boolean esDeposito;
+  private final double monto;
+  Tipo tipo;
 
-  public Movimiento(LocalDate fecha, double monto, boolean esDeposito) {
+  public Movimiento(LocalDate fecha, double monto, Tipo tipo) {
     this.fecha = fecha;
     this.monto = monto;
-    this.esDeposito = esDeposito;
+    this.tipo = tipo;
   }
 
   public double getMonto() {
@@ -28,36 +28,17 @@ public class Movimiento {
     return fecha;
   }
 
-  public boolean fueDepositado(LocalDate fecha) {
-    return isDeposito() && esDeLaFecha(fecha);
-  }
-
-  public boolean fueExtraido(LocalDate fecha) {
-    return isExtraccion() && esDeLaFecha(fecha);
-  }
-
   public boolean esDeLaFecha(LocalDate fecha) {
     return this.fecha.equals(fecha);
   }
 
-  public boolean isDeposito() {
-    return esDeposito;
+  double calcularValor(Cuenta cuenta, Tipo tipo) {
+    return cuenta.getSaldo() + tipo.calcularValor(this);
   }
 
-  public boolean isExtraccion() {
-    return !esDeposito;
+  void agregateA(Cuenta cuenta) {
+    cuenta.setSaldo(calcularValor(cuenta, tipo));
+    cuenta.agregarMovimiento(fecha, monto);
   }
 
-  public void agregateA(Cuenta cuenta) {
-    cuenta.setSaldo(calcularValor(cuenta));
-    cuenta.agregarMovimiento(fecha, monto, esDeposito);
-  }
-
-  public double calcularValor(Cuenta cuenta) { // Esto está horrible falta polimorfismo, mejor usar herencia/composición y volar los if.
-    if (esDeposito) {
-      return cuenta.getSaldo() + getMonto();
-    } else {
-      return cuenta.getSaldo() - getMonto();
-    }
-  }
 }
